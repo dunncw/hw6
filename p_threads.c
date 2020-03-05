@@ -15,7 +15,6 @@ typedef struct {
 
 } my_struct_t;
 
-
 void *mythread(void *arg) {
 
     my_struct_t *mys = arg;
@@ -34,7 +33,6 @@ void *mythread(void *arg) {
         assert(pthread_mutex_unlock(&lock) == 0);  
     
     }  
-
     return NULL;
 }
 
@@ -45,6 +43,7 @@ int main(int argc, char *argv[])
 	fprintf(stderr, "usage: p_thread <#_of_threads_to_start> <len_of_string_to_gen>\n");
 	exit(1);
     }
+	
     int threads_ts = atoi(argv[1]);
     int len_of_str  = atoi(argv[2]);
     LEN_OF_STR = len_of_str + 1;
@@ -55,24 +54,7 @@ int main(int argc, char *argv[])
     memset(str, '\0', sizeof(char)*LEN_OF_STR );
 
     printf("string: <%s>\n", str);
-    /*
-    my_struct_t vals = {1, str_pt};
-    pthread_t p1;
-    if (pthread_create(&p1, NULL, mythread, &vals) != 0) {
-            printf("Unable to create thread\n");
-            exit(1);
-    }
-
-    my_struct_t val = {2, str_pt};
-    pthread_t p2;
-    if (pthread_create(&p2, NULL, mythread, &val) != 0) {
-            printf("Unable to create thread\n");
-            exit(1);
-    }
-    
-    assert(pthread_join(p1, NULL ) == 0); 
-    assert(pthread_join(p2, NULL ) == 0);
-*/
+ 
     my_struct_t vals[threads_ts];
     pthread_t threads[threads_ts];
     for(int i = 0; i < threads_ts; i++){
@@ -80,24 +62,18 @@ int main(int argc, char *argv[])
         vals[i].t_number = i;
         vals[i].str = str_pt;
     
-        // Create the threads 
         if (pthread_create(&threads[i], NULL, mythread, &vals[i]) != 0) {
             printf("Unable to create thread\n");
             exit(1);
         } 
-
-        //assert(pthread_join(threads[i], NULL ) == 0);
     }
 
 
     for(int i = 0; i < threads_ts; i++){
         assert(pthread_join(threads[i], NULL ) == 0);
     }
-
+	
     printf("string: <%s> count <%d>\n", str, counter);
 
-    
-
     return 0;
-
 }
